@@ -1,13 +1,15 @@
 import speech_recognition as sr
+import os
+
 
 class AudioSourceManager:
     """Verwaltet verschiedene Audioquellen für die Spracherkennung"""
-    
+
     @staticmethod
     def get_microphone_source():
         """Liefert eine konfigurierte Mikrofonquelle"""
         return sr.Microphone()
-    
+
     @staticmethod
     def get_file_source(file_path):
         """
