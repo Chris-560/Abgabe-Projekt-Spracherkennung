@@ -1,5 +1,11 @@
 from transformers import pipeline
 
+from transformers import AutoConfig
+
+model_name = "distilbert-base-multilingual-cased"
+config = AutoConfig.from_pretrained(model_name)
+print("Exakte Label-Zuordnung:", config.id2label)
+
 class SentimentAnalyzer:
     def __init__(self):
         self.analyzer = pipeline(
@@ -7,9 +13,9 @@ class SentimentAnalyzer:
             model="distilbert-base-multilingual-cased"
         )
         self.label_map = {
-            "POSITIVE": "positiv",
-            "NEGATIVE": "negativ",
-            "NEUTRAL": "neutral"
+            "LABEL_0": "negativ",
+            #"LABEL_1": "neutral",
+            "LABEL_1": "positiv"
         }
     
     def analyze(self, text):
