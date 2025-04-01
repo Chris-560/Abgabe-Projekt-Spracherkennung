@@ -1,31 +1,56 @@
 from transformers import pipeline
 
-from transformers import AutoConfig
-
-model_name = "distilbert-base-multilingual-cased"
-config = AutoConfig.from_pretrained(model_name)
-print("Exakte Label-Zuordnung:", config.id2label)
-
 class SentimentAnalyzer:
     def __init__(self):
-        self.analyzer = pipeline(
-            "sentiment-analysis", 
-            model="distilbert-base-multilingual-cased"
-        )
-        self.label_map = {
-            "LABEL_0": "negativ",
-            #"LABEL_1": "neutral",
-            "LABEL_1": "positiv"
+        self.models = {
+            'de': {
+                'model': "oliverguhr/german-sentiment-bert",
+                'labels': {
+                    "negative": "negativ",
+                    "neutral": "neutral",
+                    "positive": "positiv"
+                }
+            },
+            'en': {
+                'model': "distilbert-base-uncased-finetuned-sst-2-english",
+                'labels': {
+                    "NEGATIVE": "negativ",
+                    "POSITIVE": "positiv"
+                }
+            }
         }
-    
+        self.language = 'de'  # Standardsprache
+        self.analyzer = None
+        self._load_model()
+
+    def _load_model(self):
+        config = self.models[self.language]
+        self.analyzer = pipeline(
+            "text-classification",
+            model=config['model'],
+            return_all_scores=False
+        )
+
+    def set_language(self, lang):
+        """Setzt die Analyse-Sprache (de/en)"""
+        if lang in self.models:
+            self.language = lang
+            self._load_model()
+            return True
+        return False
+
     def analyze(self, text):
         if not text:
             return None
-        
-        result = self.analyzer(text)[0]
-        label = result['label']
-        score = result['score']
-        german_label = self.label_map.get(label, label)
-        
-        print(f"Sentiment: {german_label} (Wahrscheinlichkeit: {score:.2f})")
-        return german_label, score
+
+        try:
+            result = self.analyzer(text)[0]
+            label_map = self.models[self.language]['labels']
+            return {
+                'sentiment': label_map.get(result['label'], result['label']),
+                'confidence': result['score'],
+                'language': self.language.upper()
+            }
+        except Exception as e:
+            print(f"Analysefehler: {e}")
+            return None
