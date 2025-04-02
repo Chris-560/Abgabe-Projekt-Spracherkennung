@@ -1,0 +1,19 @@
+# Python-Cache
+__pycache__/
+*.py[cod]
+
+# Virtuelle Umgebungen
+.venv/
+venv/
+
+# IDE-Dateien
+.idea/
+.vscode/
+
+# Systemdateien
+.DS_Store
+Thumbs.db
+
+# Temporäre Audiodateien
+*.wav
+*.mp3
