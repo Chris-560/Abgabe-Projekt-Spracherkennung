@@ -78,7 +78,7 @@ def main():
                 text = recognizer.recognize_from_file(audio_path)
                 if text:
                     result = analyzer.analyze(text)
-                    print(f"\nErgebnis ({result['language']}):")
+                    print(f"\nErgebnis ({result['language']}): {text}")
                     print(f"Sentiment: {result['sentiment']}")
                     print(f"Konfidenz: {result['confidence']:.2%}")
             except FileNotFoundError:
